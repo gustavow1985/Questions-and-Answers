@@ -22,10 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.get("/", (req, res)=>{
-        
-    res.render("index", {
-        
-    })
+    Pergunta.findAll({ raw: true }) //SELECT ALL FROM PERGUNTAS    -- raw: true - traz somente os dados que queremos
+        .then(perguntas => {
+            res.render("index", {
+                perguntas: perguntas
+            });
+        });
 });
 
 app.get("/perguntar", (req, res)=>{
