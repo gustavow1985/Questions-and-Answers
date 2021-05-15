@@ -22,7 +22,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.get("/", (req, res)=>{
-    Pergunta.findAll({ raw: true }) //SELECT ALL FROM PERGUNTAS    -- raw: true - traz somente os dados que queremos
+    Pergunta.findAll({ raw: true, order:[
+        ["id", "desc"] // ordenação pelo id em ordem decrescente
+    ] }) //find all equivale ao SELECT ALL FROM PERGUNTAS    -- raw: true - traz somente os dados que queremos
         .then(perguntas => {
             res.render("index", {
                 perguntas: perguntas
