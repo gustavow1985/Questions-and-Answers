@@ -50,6 +50,21 @@ app.post("/salvarPergunta", (req, res)=>{
     })
 });
 
+app.get("/pergunta/:id", (req, res) => {
+    var id = req.params.id;
+    Pergunta.findOne({
+        where: {id}
+    }).then(Pergunta => {
+        if(Pergunta != undefined){ //pergunta encontrada
+            res.render("pergunta", {
+                Pergunta
+            });
+        } else {// não encontrada
+            res.redirect("/");
+        }
+    });
+});
+
 app.listen(8080, () => {
     console.log("APP NO AR!")
 });
