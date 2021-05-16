@@ -43,28 +43,51 @@ app.get("/perguntar", (req, res)=>{
 app.post("/salvarPergunta", (req, res)=>{
     var titulo = req.body.titulo;
     var descricao = req.body.descricao;
+    
     Pergunta.create({
         titulo: titulo,
         descricao: descricao
     }).then(() => {
         res.redirect("/");
-    })
+    });
 });
 
-app.get("/pergunta/:id", (req, res) => {
+app.get("/pergunta/:id", (req, res) => 
+{
     var id = req.params.id;
-    Pergunta.findOne({
-        where: {id}
-    }).then(Pergunta => {
-        if(Pergunta != undefined){ //pergunta encontrada
-            res.render("pergunta", {
-                Pergunta
-            });
-        } else {// não encontrada
+    Pergunta.findOne(
+        {where: {id: id}}).then(Pergunta => 
+        {if (Pergunta != undefined)                                 //pergunta encontrada
+            { 
+               
+                Resposta.findAll({ where: {perguntaId: Pergunta.id},
+                    order: [
+                        ["id", "DESC"]
+                    ]
+                })
+                    .then(respostas => {res.render("pergunta", {
+                        Pergunta,
+                        respostas
+                    })})
+                    .catch(error => console.log(error))
+                
+            } else {                                                 // não encontrada
             res.redirect("/");
         }
     });
 });
+
+app.post("/responder", (req, res) => {
+    var corpo = req.body.corpo;
+    var perguntaId = req.body.pergunta;
+
+    Resposta.create({
+        corpo,
+        perguntaId
+    }).then(() => {
+        res.redirect("/pergunta/"+perguntaId)
+    })
+})
 
 app.listen(8080, () => {
     console.log("APP NO AR!")
